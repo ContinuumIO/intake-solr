@@ -1,0 +1,6 @@
+intake
+pysolr
+dask
+requests
+requests-kerberos
+pandas
