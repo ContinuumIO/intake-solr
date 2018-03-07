@@ -21,7 +21,7 @@ install:
 - |
   echo "Configuring conda."
   source $HOME/miniconda3/bin/activate root
-  conda install -y conda-build anaconda-client flake8 pysolr
+  conda install -c conda-forge -y conda-build anaconda-client flake8 pysolr
 script:
 - |
   flake8 .
