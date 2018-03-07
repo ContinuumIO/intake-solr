@@ -2,64 +2,50 @@ import shlex
 import subprocess
 import requests
 
-
-def verify_plugin_interface(plugin):
-    """Assert types of plugin attributes."""
-    assert isinstance(plugin.version, str)
-    assert isinstance(plugin.container, str)
-    assert isinstance(plugin.partition_access, bool)
+TEST_CORE = 'testcore'
 
 
-def verify_datasource_interface(source):
-    """Assert presence of datasource attributes."""
-    for attr in ['container', 'description', 'datashape', 'dtype', 'shape',
-                 'npartitions', 'metadata']:
-        assert hasattr(source, attr)
-
-    for method in ['discover', 'read', 'read_chunked', 'read_partition',
-                   'to_dask', 'close']:
-        assert hasattr(source, method)
-
-
-def start_es():
+def start_solr():
     """Bring up a container running ES.
 
     Waits until REST API is live and responsive.
     """
-    print('Starting ES server...')
+    print('Starting SOLR server...')
 
-    cmd = shlex.split('docker run -d -p 9200:9200 -p 9300:9300 -e '
-                      '"discovery.type=single-node" --name intake-es '
-                      '-e "http.host=0.0.0.0"  -e "transport.host=127.0.0.1" '
-                      '-e "xpack.security.enabled=false" '
-                      'docker.elastic.co/elasticsearch/elasticsearch:6.1.1')
-    subprocess.check_call(cmd)   # the return value is actually the container ID
+    cmd = shlex.split('docker run -d --name intake-solr -p 8983:8983 -P '
+                      'solr solr-create -c ' + TEST_CORE)
+    cid = subprocess.check_output(cmd).decode()[:-1]
 
     while True:
         try:
-            r = requests.get('http://localhost:9200')
-            r.json()
-            break
-        except:
+            r = requests.get('http://localhost:8983')
+            if r.ok:
+                break
+        except requests.ConnectionError:
             pass
+    return cid
 
 
-def stop_docker(name, let_fail=False):
+def stop_docker(name='intake-solr', cid=None, let_fail=False):
     """Stop docker container with given name tag
 
     Parameters
     ----------
     name: str
         name field which has been attached to the container we wish to remove
+    cid: str
+        container ID, if known
     let_fail: bool
         whether to raise an exception if the underlying commands return an
         error.
     """
     try:
-        print('Stopping %s ...' % name)
-        cmd = shlex.split('docker ps -q --filter "name=%s"' % name)
-        cid = subprocess.check_output(cmd).strip().decode()
+        if cid is None:
+            print('Finding %s ...' % name)
+            cmd = shlex.split('docker ps -q --filter "name=%s"' % name)
+            cid = subprocess.check_output(cmd).strip().decode()
         if cid:
+            print('Stopping %s ...' % cid)
             subprocess.call(['docker', 'kill', cid])
             subprocess.call(['docker', 'rm', cid])
     except subprocess.CalledProcessError as e:
