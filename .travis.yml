@@ -31,8 +31,7 @@ script:
       # Workaround for Travis-CI bug #2: https://github.com/travis-ci/travis-ci/issues/7773
       conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" -c defaults -c conda-forge --no-test ./conda
   fi
-- if [ -n "$TRAVIS_TAG" ]; then anaconda -t ${ANACONDA_INTAKE_TOKEN}
-  upload -u intake --force `conda build -c intake/label/main -c defaults -c conda-forge --output ./conda`; fi
+- if [ -n "$TRAVIS_TAG" ]; then anaconda -t ${ANACONDA_INTAKE_TOKEN} upload -u intake --force `conda build -c intake/label/main -c defaults -c conda-forge --output ./conda`; fi
 notifications:
   email: false
   on_success: change
