@@ -150,3 +150,6 @@ class SOLRTableSource(SOLRSequenceSource):
             self._schema = None
             self.discover()
         return self._dataframe
+
+    def _close(self):
+        self._dataframe = None
