@@ -93,8 +93,12 @@ class SOLRSequenceSource(base.DataSource):
         if zoocollection:
             url = ','.join(['/'.join([b, core]) for b in base_url.split(',')])
             zoo = pysolr.ZooKeeper(url)
-            self.solr = pysolr.SolrCloud(zoo, zoocollection, auth=auth,
-                                         verify=cert)
+            if auth or cert:
+                self.solr = pysolr.SolrCloud(zoo, zoocollection, auth=auth,
+                                             verify=cert)
+            else:
+                # conda released pysolr does not support auth=
+                self.solr = pysolr.SolrCloud(zoo, zoocollection)
         else:
             url = '/'.join([base_url, core])
             if auth or cert:
@@ -105,6 +109,7 @@ class SOLRSequenceSource(base.DataSource):
 
         super(SOLRSequenceSource, self).__init__(container=self.container,
                                                  metadata=metadata)
+
     def _get_schema(self):
         return base.Schema(datashape=None,
                            dtype=None,
@@ -127,6 +132,30 @@ class SOLRSequenceSource(base.DataSource):
 
 
 class SOLRTableSource(SOLRSequenceSource):
+    """Execute a query on SOLR, return as dataframe
+
+    Parameters
+    ----------
+    query: str
+        Query to execute, in Lucene syntax, e.g., ``"*:*"``
+    base_url: str
+        Connection on which to reach SOLR, including protocol (http), server,
+        port and base path. If using Zookeeper, this should be the full
+        comma-separated list of service:port/path elements.
+    core: str
+        Named segment of the SOLR storage to query
+    qargs: dict
+        Further parameters to pass with the query (e.g., highlighting)
+    metadata: dict
+        Additional information to associate with this source
+    auth: None, "kerberos" or (username, password)
+        Authentication to attach to requests
+    cert: str or None
+        Path to SSL certificate, if required
+    zoocollection: bool or str
+        If using Zookeeper to orchestrate SOLR, this is the name of the
+        collection to connect to.
+    """
 
     container = 'dataframe'
     _dataframe = None
