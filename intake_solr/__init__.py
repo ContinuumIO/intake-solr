@@ -2,7 +2,7 @@ from intake.source import base
 import pandas as pd
 from requests_kerberos import HTTPKerberosAuth, OPTIONAL
 import pysolr
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 
 
 class SequencePlugin(base.Plugin):
