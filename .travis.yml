@@ -8,7 +8,7 @@ env:
   matrix:
   - CONDA_PY=36
   global:
-    secure: Ijfn6JJnPHZTruqQPNf0OFVHkq+xMQi/v9uNM6ByyC7u5fV4IoDYKOV0c6uJ9rW7ZALNhy/Nnh36teIrx6XJvbZj5K1ibgi90McGFNOf5VSzUoSElwIy8px+znv7bzQwTU8w6h/gd3bouWlApTvGvMBwxh92Nty/Tusr7qPoX3WDXrnDJpiEDK4mrffblFAnIxHIhgsFpyI/J0iyibZIstpXoj2THqe0cHxhLhSO5y1/opU3NfnBiMHT5ldQu3azdUGim5l5wr3IOTlmMKijv1DrV6m4hunS/Ug5dzYhxxuKFWsJAABjVNk+9xcB0JtL+qqf5E/1pG+nh9hMlsyZsYudsnSue2XOYnFVUbBDOOYlaE4vHWmFbOyiwwvgLzAYoDtUowWGRIroO4i64Ta89D0IUs1mmIop9t9mekfSAO9Z+FezfURcy9O5GPzvSwIHKuubXdd2fEMEF8H7QgPnMoxioMpd5iqwoV69mr94MhSKYb25N31jJMUqMEqoeU9Tfl/sUdDgRKglMemsGNlwgUuhXjNUQe2/wfC5LDCFDC1/HK/wwpNnaZrQOKKReP8t4yhCFemkmMWNwjHffMnSR6FzQxK5pZL7RZ/hdALuZizcAcLSRTYT9z/lYCQw96nb0bUZvW3UVX3IxhvTRSSvMWztpJrUZxXYpcc2blh1U04=
+    secure: JkxZdzb5AEJ6Y3/Veyj31weX5MaUqUmb2giv18896OBoFyn6GF5iFgpHB4WOjEyJYaGY38jlzN+gZVwhCn2Q7SjzaV3YgBDHVI7p8e+Na+MeiVhoO2V21Ni0WDDGnTx2beySDvOSpw/i67gU2K/CeH0mjhwFk1htIiQ7G7fRkG53eAwrfyot5YXQGtKyPBSuN78Et5I9K/brRUg2T7+5MW0vS4N9/OibkrZ8ajfemxufYwrLDd8z3Q6Rvy9PMN1B9Jl8iCvEv4vmxNQJBOZe9OmBNTnHfPeTZApxhOYc4D+6WoMlrTc5t3G0RsvbqOPNzQnMRCo7/q3zLdkr13TOpXWfYm5JnlM9P1IjynD0z5wWmTxpKFaKvXI3MO4MTaW6GyId0o6LdTABmYOsG0JQ+4UxCx6XjPAPHvev5ospleYR8rvfVDJXx89dmTN2Ms3XpNPXGZFXlB3Holq6s2Ksm154MNu0IKNTMZ4w5egh7zZbjrkSJzwLmT2HSCKqYhlxXRABSOAeX3CEpIIyM8Khz1pF6h378c8pDWY595WQ8aR3bsBdOVdAyjzZWa0ALjpm4zhVvEWRTuzJq6qQOEQ8Km4yfU/AJQQhPuG25eDmcqRZPIyu9JEh9PFlGlLtHIh5vigMezeyW4drc/DSdA+ikOHjnbEyI8NfkPgi8uACjF8=
 install:
 - |
   echo "Installing a fresh version of Miniconda."
@@ -24,14 +24,13 @@ script:
 - |
   flake8 .
   if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" -c defaults -c conda-forge ./conda
+      conda build -c intake -c defaults -c conda-forge ./conda
   else
       # Workaround for Travis-CI bug #2: https://github.com/travis-ci/travis-ci/issues/7773
-      conda build -c "https://conda.anaconda.org/t/$ANACONDA_INTAKE_TOKEN/intake" -c defaults -c conda-forge --no-test ./conda
+      conda build -c intake -c defaults -c conda-forge --no-test ./conda
   fi
-- if [ -n "$TRAVIS_TAG" ]; then anaconda upload -t ${ANACONDA_INTAKE_TOKEN} -u intake
-  --force `conda build -c intake/label/main --output ./conda`;
-  fi
+- if [ -n "$TRAVIS_TAG" ]; then anaconda upload -t ${ANACONDA_TOKEN} -u intake --force
+  `conda build -c intake/label/main --output ./conda`; fi
 notifications:
   email: false
   on_success: change
