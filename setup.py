@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 
 from setuptools import setup, find_packages
-version = '0.0.2'
+import versioneer
 
 
 requires = open('requirements.txt').read().strip().split('\n')
 
 setup(
     name='intake-solr',
-    version=version,
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     description='SOLR plugin for Intake',
     url='https://github.com/ContinuumIO/intake-solr',
     maintainer='Martin Durant',
