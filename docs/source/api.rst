@@ -3,11 +3,11 @@ API Reference
 
 .. currentmodule:: intake_solr
 .. autosummary::
-   Plugin
-   SOLRSource
+   intake_solr.Plugin
+   intake_solr.source.SOLRSource
 
-.. autoclass:: Plugin
+.. autoclass:: intake_solr.Plugin
    :members:
 
-.. autoclass:: SOLRSource
+.. autoclass:: intake_solr.source.SOLRSource
    :members:
