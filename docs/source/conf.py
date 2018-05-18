@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# intake-solr documentation build configuration file, created by
+# intake_solr documentation build configuration file, created by
 # sphinx-quickstart on Mon Jan 15 18:11:02 2018.
 #
 # This file is execfile()d with the current directory set to its
@@ -50,7 +50,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'intake-solr'
+project = u'intake_solr'
 copyright = u'2018, Martin Durant'
 author = u'Martin Durant'
 
@@ -143,7 +143,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'intake-solr.tex', u'intake-solr Documentation',
+    (master_doc, 'intake_solr.tex', u'intake_solr Documentation',
      u'Joseph Crail', 'manual'),
 ]
 
@@ -153,7 +153,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'intake-solr', u'intake-solr Documentation',
+    (master_doc, 'intake_solr', u'intake_solr Documentation',
      [author], 1)
 ]
 
@@ -164,7 +164,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'intake-solr', u'intake-solr Documentation',
-     author, 'intake-solr', 'One line description of project.',
+    (master_doc, 'intake_solr', u'intake_solr Documentation',
+     author, 'intake_solr', 'One line description of project.',
      'Miscellaneous'),
 ]
