@@ -143,7 +143,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'intake_solr.tex', u'intake_solr Documentation',
+    (master_doc, 'intake_solr.tex', u'intake\\_solr Documentation',
      u'Joseph Crail', 'manual'),
 ]
 
