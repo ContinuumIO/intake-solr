@@ -8,7 +8,7 @@ class SequencePlugin(base.Plugin):
     """Plugin for SOLR reader"""
 
     def __init__(self):
-        super(SequencePlugin, self).__init__(name='solr-sequence',
+        super(SequencePlugin, self).__init__(name='solr_sequence',
                                              version=__version__,
                                              container='python',
                                              partition_access=False)
@@ -35,7 +35,7 @@ class TablePlugin(base.Plugin):
 
     def __init__(self):
         super(TablePlugin, self).__init__(
-            name='solr-table', version=__version__, container='dataframe',
+            name='solr_table', version=__version__, container='dataframe',
             partition_access=False)
 
     def open(self, query, base_url, core, **kwargs):
