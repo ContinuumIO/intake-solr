@@ -2,6 +2,7 @@ from intake.source import base
 import pandas as pd
 from requests_kerberos import HTTPKerberosAuth, OPTIONAL
 import pysolr
+from . import __version__
 
 
 class SOLRSequenceSource(base.DataSource):
@@ -30,6 +31,9 @@ class SOLRSequenceSource(base.DataSource):
         collection to connect to.
     """
     container = 'python'
+    name = 'solr'
+    version = __version__
+    partition_access = False
 
     def __init__(self, query, base_url, core, qargs=None, metadata=None,
                  auth=None, cert=None, zoocollection=False):
@@ -57,8 +61,7 @@ class SOLRSequenceSource(base.DataSource):
                 # conda released pysolr does not support auth=
                 self.solr = pysolr.Solr(url)
 
-        super(SOLRSequenceSource, self).__init__(container=self.container,
-                                                 metadata=metadata)
+        super(SOLRSequenceSource, self).__init__(metadata=metadata)
 
     def _get_schema(self):
         return base.Schema(datashape=None,
@@ -108,14 +111,14 @@ class SOLRTableSource(SOLRSequenceSource):
     """
 
     container = 'dataframe'
-    _dataframe = None
 
     def _get_schema(self, retry=2):
         """Get schema from first 10 hits or cached dataframe"""
-        if self._dataframe is None:
+        if not hasattr(self, '_dataframe'):
             self._get_partition(0)
+        dtype = {k: str(v) for k, v in self._dataframe.dtypes.to_dict().items()}
         return base.Schema(datashape=None,
-                           dtype=self._dataframe[:0],
+                           dtype=dtype,
                            shape=self._dataframe.shape,
                            npartitions=1,
                            extra_metadata={})
@@ -123,7 +126,7 @@ class SOLRTableSource(SOLRSequenceSource):
     def _get_partition(self, _):
         """Downloads all data
         """
-        if self._dataframe is None:
+        if not hasattr(self, '_dataframe'):
             df = pd.DataFrame(self._do_query())
             self._dataframe = df
             self._schema = None

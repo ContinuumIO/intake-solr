@@ -5,7 +5,7 @@ import pytest
 import pandas as pd
 import time
 
-from intake_solr import SequencePlugin, TablePlugin
+from intake_solr import SOLRSequenceSource, SOLRTableSource
 from .util import start_solr, stop_docker, TEST_CORE
 
 CONNECT = {'host': 'localhost', 'port': 9200}
@@ -42,16 +42,14 @@ def engine():
 
 
 def test_sequence_read(engine):
-    p = SequencePlugin()
-    source = p.open('score:[0 TO 150]', engine, TEST_CORE)
+    source = SOLRSequenceSource('score:[0 TO 150]', engine, TEST_CORE)
     out = source.read()
     out2 = pd.DataFrame(out)[df.columns]
     assert out2.equals(df)
 
 
 def test_table_read(engine):
-    p = TablePlugin()
-    source = p.open('score:[0 TO 150]', engine, TEST_CORE)
+    source = SOLRTableSource('score:[0 TO 150]', engine, TEST_CORE)
     out = source.read()
     out2 = out[df.columns]
     assert out2.equals(df)
