@@ -17,6 +17,11 @@ setup(
     license='BSD',
     py_modules=['intake_solr'],
     packages=find_packages(),
+    entry_points={
+        'intake.drivers': [
+	    'solr = intake_solr.source:SOLRSequenceSource',
+            # '??? = intake_solr.source:SOLRTableSource',
+	]},
     package_data={'': ['*.csv', '*.yml', '*.html']},
     include_package_data=True,
     install_requires=requires,
