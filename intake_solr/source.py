@@ -1,6 +1,5 @@
 from intake.source import base
 import pandas as pd
-from requests_kerberos import HTTPKerberosAuth, OPTIONAL
 import pysolr
 from . import __version__
 
@@ -42,6 +41,7 @@ class SOLRSequenceSource(base.DataSource):
         self.metadata = metadata or {}
         self._schema = None
         if auth == 'kerberos':
+            from requests_kerberos import HTTPKerberosAuth, OPTIONAL
             auth = HTTPKerberosAuth(mutual_authentication=OPTIONAL,
                                     sanitize_mutual_error_response=False)
         if zoocollection:

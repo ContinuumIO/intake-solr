@@ -6,9 +6,7 @@ services:
 - docker
 env:
   matrix:
-  - CONDA_PY=36
-  global:
-    secure: JkxZdzb5AEJ6Y3/Veyj31weX5MaUqUmb2giv18896OBoFyn6GF5iFgpHB4WOjEyJYaGY38jlzN+gZVwhCn2Q7SjzaV3YgBDHVI7p8e+Na+MeiVhoO2V21Ni0WDDGnTx2beySDvOSpw/i67gU2K/CeH0mjhwFk1htIiQ7G7fRkG53eAwrfyot5YXQGtKyPBSuN78Et5I9K/brRUg2T7+5MW0vS4N9/OibkrZ8ajfemxufYwrLDd8z3Q6Rvy9PMN1B9Jl8iCvEv4vmxNQJBOZe9OmBNTnHfPeTZApxhOYc4D+6WoMlrTc5t3G0RsvbqOPNzQnMRCo7/q3zLdkr13TOpXWfYm5JnlM9P1IjynD0z5wWmTxpKFaKvXI3MO4MTaW6GyId0o6LdTABmYOsG0JQ+4UxCx6XjPAPHvev5ospleYR8rvfVDJXx89dmTN2Ms3XpNPXGZFXlB3Holq6s2Ksm154MNu0IKNTMZ4w5egh7zZbjrkSJzwLmT2HSCKqYhlxXRABSOAeX3CEpIIyM8Khz1pF6h378c8pDWY595WQ8aR3bsBdOVdAyjzZWa0ALjpm4zhVvEWRTuzJq6qQOEQ8Km4yfU/AJQQhPuG25eDmcqRZPIyu9JEh9PFlGlLtHIh5vigMezeyW4drc/DSdA+ikOHjnbEyI8NfkPgi8uACjF8=
+  - CONDA_PY=37
 install:
 - |
   echo "Installing a fresh version of Miniconda."
@@ -19,24 +17,14 @@ install:
 - |
   echo "Configuring conda."
   source $HOME/miniconda3/bin/activate root
-  conda install -c defaults -c conda-forge -y conda-build anaconda-client flake8 pysolr
+  conda install -c conda-forge -y flake8 intake pandas pytest requests
+  pip install pysolr
+  pip install -e .
 script:
 - |
-  flake8 .
-  if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-      conda build -c intake -c defaults -c conda-forge ./conda
-  else
-      # Workaround for Travis-CI bug #2: https://github.com/travis-ci/travis-ci/issues/7773
-      conda build -c intake -c defaults -c conda-forge --no-test ./conda
-  fi
+  flake8 intake_solr
 - |
-  if [ -n "$TRAVIS_TAG" ]; then
-      # If tagged git version, upload package to main channel
-      anaconda -t ${ANACONDA_TOKEN} upload -u intake --force `conda build --output ./conda`
-  else
-      # Otherwise upload package to dev channel
-      anaconda -t ${ANACONDA_TOKEN} upload -u intake --label dev --force `conda build --output ./conda`
-  fi
+  pytest
 notifications:
   email: false
   on_success: change
