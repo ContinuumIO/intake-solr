@@ -116,7 +116,8 @@ class SOLRTableSource(SOLRSequenceSource):
         """Get schema from first 10 hits or cached dataframe"""
         if not hasattr(self, '_dataframe'):
             self._get_partition(0)
-        dtype = {k: str(v) for k, v in self._dataframe.dtypes.to_dict().items()}
+        dtype = {k: str(v)
+                 for k, v in self._dataframe.dtypes.to_dict().items()}
         return base.Schema(datashape=None,
                            dtype=dtype,
                            shape=self._dataframe.shape,

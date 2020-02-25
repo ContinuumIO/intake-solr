@@ -23,7 +23,6 @@ install:
 script:
 - |
   flake8 intake_solr
-- |
   pytest
 notifications:
   email: false
