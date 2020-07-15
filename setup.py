@@ -11,7 +11,7 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     description='SOLR plugin for Intake',
-    url='https://github.com/ContinuumIO/intake-solr',
+    url='https://github.com/intake/intake-solr',
     maintainer='Martin Durant',
     maintainer_email='mdurant@anaconda.com',
     license='BSD',
@@ -19,9 +19,9 @@ setup(
     packages=find_packages(),
     entry_points={
         'intake.drivers': [
-	    'solr = intake_solr.source:SOLRSequenceSource',
-            # '??? = intake_solr.source:SOLRTableSource',
-	]},
+            'solr = intake_solr.source:SOLRSequenceSource',
+            'solrtab = intake_solr.source:SOLRTableSource',
+        ]},
     package_data={'': ['*.csv', '*.yml', '*.html']},
     include_package_data=True,
     install_requires=requires,
