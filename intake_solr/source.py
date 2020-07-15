@@ -110,6 +110,7 @@ class SOLRTableSource(SOLRSequenceSource):
         collection to connect to.
     """
 
+    name = 'solrtab'
     container = 'dataframe'
 
     def _get_schema(self, retry=2):
