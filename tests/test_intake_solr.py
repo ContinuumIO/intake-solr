@@ -9,7 +9,7 @@ from intake_solr import SOLRSequenceSource, SOLRTableSource
 from .util import start_solr, stop_docker, TEST_CORE
 
 CONNECT = {'host': 'localhost', 'port': 9200}
-TEST_DATA_DIR = 'tests'
+TEST_DATA_DIR = os.path.abspath(os.path.dirname(__file__))
 TEST_DATA = 'sample1.csv'
 df = pd.read_csv(os.path.join(TEST_DATA_DIR, TEST_DATA))
 
