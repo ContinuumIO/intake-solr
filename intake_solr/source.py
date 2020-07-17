@@ -176,6 +176,10 @@ class SOLRTableSource(SOLRSequenceSource):
         columns = self.qargs["fl"] if "fl" in self.qargs else sorted(seq[0].keys())
         return pd.DataFrame(seq, columns=columns)
 
+    def read(self):
+        self._load_metadata()
+        return pd.concat(self._get_partition(index) for index in range(self.npartitions))
+
     def to_dask(self):
         from dask import delayed
         import dask.dataframe
