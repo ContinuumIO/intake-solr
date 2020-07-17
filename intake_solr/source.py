@@ -108,6 +108,14 @@ class SOLRSequenceSource(base.DataSource):
                         for k, v in d.items()})
         return out
 
+    def _close(self):
+        pass
+
+    def read(self):
+        self._load_metadata()
+        from itertools import chain
+        return chain(*(self._get_partition(index) for index in range(self.npartitions)))
+
     def to_dask(self):
         from dask import delayed
         import dask.bag
