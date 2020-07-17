@@ -36,6 +36,7 @@ class SOLRSequenceSource(base.DataSource):
     container = 'python'
     name = 'solr'
     version = __version__
+    partition_access = True
 
     def __init__(self, query, base_url, core, qargs=None, metadata=None,
                  auth=None, cert=None, zoocollection=False,
@@ -111,9 +112,9 @@ class SOLRSequenceSource(base.DataSource):
         from dask import delayed
         import dask.bag
 
-        npartitions = self.discover()["npartitions"]
+        self._load_metadata()
         return dask.bag.from_delayed(
-            [delayed(self.read_partition)(i) for i in range(npartitions)]
+            [delayed(self.read_partition)(i) for i in range(self.npartitions)]
         )
 
 
@@ -141,32 +142,38 @@ class SOLRTableSource(SOLRSequenceSource):
     zoocollection: bool or str
         If using Zookeeper to orchestrate SOLR, this is the name of the
         collection to connect to.
+    partition_len: int or None
+        The desired partition size. [default: 1024]
     """
 
     name = 'solrtab'
     container = 'dataframe'
+    partition_access = True
 
     def _get_schema(self, retry=2):
         """Get schema from first 10 hits or cached dataframe"""
-        if not hasattr(self, '_dataframe'):
-            self._get_partition(0)
-        dtype = {k: str(v)
-                 for k, v in self._dataframe.dtypes.to_dict().items()}
-        return base.Schema(datashape=None,
-                           dtype=dtype,
-                           shape=self._dataframe.shape,
-                           npartitions=1,
-                           extra_metadata={})
+        schema = super()._get_schema()
 
-    def _get_partition(self, _):
-        """Downloads all data
+        df = self._get_partition(0)
+        schema["dtype"] = {k: str(v)
+                           for k, v in df.dtypes.to_dict().items()}
+        schema["shape"] = (schema["shape"][0], *df.shape[1:])
+        return schema
+
+    def _get_partition(self, index):
+        """Downloads all data in the partition
         """
-        if not hasattr(self, '_dataframe'):
-            df = pd.DataFrame(super()._get_partition(_))
-            self._dataframe = df
-            self._schema = None
-            self.discover()
-        return self._dataframe
+        seq = super()._get_partition(index)
+        # Columns are sorted unless the user defines the field list (fl)
+        columns = self.qargs["fl"] if "fl" in self.qargs else sorted(seq[0].keys())
+        return pd.DataFrame(seq, columns=columns)
 
-    def _close(self):
-        self._dataframe = None
+    def to_dask(self):
+        from dask import delayed
+        import dask.dataframe
+
+        self._load_metadata()
+        return dask.dataframe.from_delayed(
+            [delayed(self.read_partition)(i) for i in range(self.npartitions)]
+        )
+
