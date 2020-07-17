@@ -162,10 +162,15 @@ class SOLRTableSource(SOLRSequenceSource):
         """Get schema from first 10 hits or cached dataframe"""
         schema = super()._get_schema()
 
-        df = self._get_partition(0)
-        schema["dtype"] = {k: str(v)
-                           for k, v in df.dtypes.to_dict().items()}
-        schema["shape"] = (schema["shape"][0], *df.shape[1:])
+        prev_partition_len = self.partition_len
+        try:
+            self.partition_len = 10
+            df = self._get_partition(0)
+            schema["dtype"] = {k: str(v) for k, v in df.dtypes.to_dict().items()}
+            schema["shape"] = (schema["shape"][0], *df.shape[1:])
+        finally:
+            self.partition_len = prev_partition_len
+
         return schema
 
     def _get_partition(self, index):
